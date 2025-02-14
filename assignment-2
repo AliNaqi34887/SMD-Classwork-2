@@ -1,0 +1,127 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'To-Do App',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 23, 83, 107)),
+        useMaterial3: true,
+      ),
+      debugShowCheckedModeBanner: false,
+      home: const MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final TextEditingController _controller = TextEditingController();
+  final List<TodoItem> _tasks = [TodoItem("fsdkfjhsdlfkdh", true)];
+  void _addTask() {
+    if (_controller.text.isNotEmpty) {
+      setState(() {
+        _tasks.add(TodoItem(_controller.text.trim(), false));
+        _controller.clear();
+      });
+    }
+  }
+
+  void _completeTask(int index){
+    setState(() {
+      _tasks[index].isDone = !_tasks[index].isDone;
+    });
+    // return true;
+  }
+
+  void _removeTask(int index) {
+    setState(() {
+      _tasks.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('To-Do List'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Input field for new task
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: 'Enter a new task',
+                border: OutlineInputBorder(),
+                
+              ),
+              onSubmitted: (_) => _addTask(),
+            ),
+            const SizedBox(height: 16),
+            // Button to add the task
+            ElevatedButton(
+              onPressed: _addTask,
+              child: Icon(
+                Icons.add_task,
+              ),
+            ),
+            const SizedBox(height: 16),
+            // List of tasks
+            Expanded(
+              child: ListView.builder(
+                itemCount: _tasks.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ListTile(
+                      title: Text(_tasks[index].description, style: TextStyle(decoration: _tasks[index].isDone?TextDecoration.lineThrough:null),),
+                      leading: IconButton(
+                        icon:  Icon(Icons.check_circle, color: _tasks[index].isDone ? Colors.green :Colors.grey),
+                        onPressed: () => _completeTask(index),
+                      ),
+                      trailing: 
+                        
+                        
+                          IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red,),
+                        onPressed: () => _removeTask(index),
+                      ),
+                      
+                      
+                      ),
+                      
+                      
+                    );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+class TodoItem{
+  final String description;
+   bool isDone;
+  TodoItem(this.description,this.isDone); 
+
+}
